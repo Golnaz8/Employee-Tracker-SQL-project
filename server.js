@@ -37,7 +37,7 @@ function init() {
           'Add a role',
           'Add an employee',
           'Update an employee role',
-          'exit',
+          'Exit',
         ]
       })
       .then(response => {
@@ -50,23 +50,22 @@ function init() {
             viewAllRoles();
             break;
           case 'View all employees':
-            // function
+            viewAllEmployees();
             break;
           case 'Add a department':
-            // function
+            addDepartment();
             break;
           case 'Add a role':
-            // function
+            addRole();
             break;
           case 'Add an employee':
-            // function
+            addEmployee();
             break;
           case 'Update an employee role':
-            // function
+            updateEmployeeRole();
             break;
           case 'Exit':
-            db.end();
-            console.log('Disconnected from MySQL database');
+            console.log('End of the task! Disconnected from the company_db database.');
             break;
         }
     });
@@ -80,17 +79,43 @@ function viewAllDepartments() {
           res.status(500).json({ error: err.message });
            return;
         }
-        res.json({
-          message: 'success',
-          data: rows
-        });
+       console.log(rows);
         init();
       });
 }
 
 
 function viewAllRoles() {
+  const sql = 'SELECT id, title FROM role';
+  db.query(sql, (err, rows) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+         return;
+      }
+     console.log(rows);
+      init();
+    });
+}
 
+
+function viewAllEmployees() {
+  const sql = 'SELECT id, first_name, last_name FROM employee';
+  db.query(sql, (err, rows) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+         return;
+      }
+     console.log(rows);
+      init();
+    });
 }
 
 init();
+
+app.use((req, res) => {
+  res.status(404).end();
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
