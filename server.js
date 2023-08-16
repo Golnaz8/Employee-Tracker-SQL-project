@@ -75,9 +75,9 @@ function init() {
 function viewAllDepartments() {
     const sql = 'SELECT id, name FROM department';
     db.query(sql, (err, rows) => {
-        if (err) {
-          res.status(500).json({ error: err.message });
-           return;
+      if (err) {
+        console.error('Error viewing all departments', err);
+        return;
         }
        console.log(rows);
         init();
@@ -88,10 +88,10 @@ function viewAllDepartments() {
 function viewAllRoles() {
   const sql = 'SELECT id, title FROM role';
   db.query(sql, (err, rows) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-         return;
-      }
+    if (err) {
+      console.error('Error viewing all roles', err);
+      return;
+    }
      console.log(rows);
       init();
     });
@@ -101,14 +101,74 @@ function viewAllRoles() {
 function viewAllEmployees() {
   const sql = 'SELECT id, first_name, last_name FROM employee';
   db.query(sql, (err, rows) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-         return;
-      }
-     console.log(rows);
-      init();
+    if (err) {
+      console.error('Error viewing all employees', err);
+      return;
+    }
+    console.log(rows);
+    init();
     });
 }
+
+
+function addDepartment() {
+  inquirer.prompt ({
+    type: 'inpute',
+    name: 'departmentName',
+    message: 'What is the name of the department?'
+  })    .then(response => {
+    const sql = 'INSERT INTO department (name) VALUES (?)';
+    const values = [response.departmentName];
+
+    db.query(sql, values, (err, result) => {
+      if (err) {
+        console.error('Error adding department:', err);
+        return;
+      } else {
+        console.log('Department added successfully.');
+        console.log(result);
+      }
+      init();
+    });
+  });
+}
+
+
+function addRole() {
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'roleTitle',
+      message: 'What is the name of the role?'
+    },
+    {
+      type: 'input',
+      name: 'salary',
+      message: 'What is the salary of the role?'
+    },
+    // {
+    //   type: 'input',
+    //   name: 'roleDepartment',
+    //   message: 'Which department does the role belong to?'
+    // }
+
+  ]).then(response => {
+    const sql = 'INSERT INTO role (title, salary) VALUES (?, ?)';
+    const values = [response.roleTitle, response.salary];
+
+    db.query(sql, values, (err, result) => {
+      if (err) {
+        console.error('Error adding role:', err);
+      } else {
+        console.log('Role added successfully.');
+        console.log(result);
+      }
+      init();
+    });
+  });
+}
+
+
 
 init();
 
