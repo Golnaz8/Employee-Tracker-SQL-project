@@ -79,33 +79,33 @@ function viewAllDepartments() {
       console.error('Error viewing all departments', err);
       return;
     }
-    console.log(rows);
+    console.table(rows);
     init();
   });
 }
 
 
 function viewAllRoles() {
-  const sql = 'SELECT id, title FROM role';
+  const sql = 'SELECT role.id AS id, role.title AS title, role.salary AS salary, department.name as department FROM department JOIN role ON department.id = role.department_id';
   db.query(sql, (err, rows) => {
     if (err) {
       console.error('Error viewing all roles', err);
       return;
     }
-    console.log(rows);
+    console.table(rows);
     init();
   });
 }
 
 
 function viewAllEmployees() {
-  const sql = 'SELECT id, first_name, last_name FROM employee';
+  const sql = 'SELECT employee.id AS id, employee.first_name AS FName, employee.last_name AS LName FROM employee';
   db.query(sql, (err, rows) => {
     if (err) {
       console.error('Error viewing all employees', err);
       return;
     }
-    console.log(rows);
+    console.table(rows);
     init();
   });
 }
