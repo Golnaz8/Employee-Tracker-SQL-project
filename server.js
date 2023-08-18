@@ -99,7 +99,7 @@ function viewAllRoles() {
 
 
 function viewAllEmployees() {
-  const sql = 'SELECT employee.id AS id, employee.first_name AS FName, employee.last_name AS LName FROM employee';
+  const sql = 'SELECT employee.id AS id, employee.first_name AS FName, employee.last_name AS LName, role.title AS title, role.salary AS salary, department.name AS department, CONCAT(manager.first_name," ", manager.last_name) AS manager_name FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id LEFT JOIN employee AS manager ON employee.manager_id = manager.id';
   db.query(sql, (err, rows) => {
     if (err) {
       console.error('Error viewing all employees', err);
@@ -242,6 +242,83 @@ function addEmployee() {
             console.log('Employee added successfully.');
           }
           init();
+        });
+      });
+    });
+  });
+}
+
+
+function updateEmployeeRole() {
+  const employeeQuery = 'SELECT id, first_name, last_name FROM employee';
+  db.query(employeeQuery, (err, employees) => {
+    if (err) {
+      console.error('Error fetching employees:', err);
+      return;
+    }
+    // Map employee to inquirer choices format
+    const emloyeeChoices = employees.map(employee => ({
+      name: `${employee.first_name} ${employee.last_name}`,
+      value: employee.id
+    }));
+
+    const roleQuery = 'SELECT id, title FROM role';
+    db.query(roleQuery, (err, roles) => {
+      if (err) {
+        console.error('Error fetching roles:', err);
+        return;
+      }
+      const roleChoices = roles.map(role => ({
+        name: role.title,
+        value: role.id
+      }));
+
+      const managerQuery = 'SELECT id, first_name, last_name FROM employee';
+      db.query(managerQuery, (err, managers) => {
+        if (err) {
+          console.error('Error fetching managers:', err);
+          return;
+        }
+
+        // Map managers to inquirer choices format
+        const managerChoices = managers.map(manager => ({
+          name: `${manager.first_name} ${manager.last_name}`,
+          value: manager.id
+        }));
+
+
+
+        inquirer.prompt([
+          {
+            type: 'list',
+            name: 'employeeUpdate',
+            message: 'Which employee s role do yo want to update?',
+            choices: emloyeeChoices
+          },
+          {
+            type: 'list',
+            name: 'employeeRole',
+            message: 'What is the employee s role?',
+            choices: roleChoices
+          },
+          {
+            type: 'list',
+            name: 'employeeManager',
+            message: 'Who is the employee s manager?',
+            choices: managerChoices
+          }
+        ]).then(response => {
+          const sql = 'UPDATE employee SET role_id = ?, manager_id = ? WHERE id = ?';
+          const values = [response.employeeRole, response.employeeManager, response.employeeUpdate];
+
+          db.query(sql, values, (err, result) => {
+            if (err) {
+              console.error('Error updating employee role:', err);
+            } else {
+              console.log('Employee role updated successfully.');
+            }
+            init();
+          });
         });
       });
     });
