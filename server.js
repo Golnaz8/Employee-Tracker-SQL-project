@@ -15,7 +15,7 @@ const db = mysql.createConnection(
     host: 'localhost',
     // MySQL username,
     user: 'root',
-    // TODO: Add MySQL password here
+    // please Add MySQL password here
     password: 'Golnaz@1283!',
     database: 'company_db'
   },
@@ -23,6 +23,8 @@ const db = mysql.createConnection(
 );
 
 
+
+// to start the application with the first question and choices then depends on choice a fuction will be called
 function init() {
   inquirer
     .prompt({
@@ -71,7 +73,7 @@ function init() {
           break;
         case 'Department utilized budget':
           departmentBudget();
-          break;  
+          break;
         case 'Exit':
           console.log('End of the task! Disconnected from the company_db database.');
           break;
@@ -80,6 +82,8 @@ function init() {
 }
 
 
+
+// to view all departments from department table
 function viewAllDepartments() {
   const sql = 'SELECT id, name FROM department';
   db.query(sql, (err, rows) => {
@@ -92,7 +96,7 @@ function viewAllDepartments() {
   });
 }
 
-
+// to view all roles and salaries from role table which is joined with department table
 function viewAllRoles() {
   const sql = 'SELECT role.id AS id, role.title AS title, role.salary AS salary, department.name as department FROM department JOIN role ON department.id = role.department_id';
   db.query(sql, (err, rows) => {
@@ -106,6 +110,8 @@ function viewAllRoles() {
 }
 
 
+
+// to view all employees data from employee table which is joined with role and department tables
 function viewAllEmployees() {
   const sql = 'SELECT employee.id AS id, employee.first_name AS FName, employee.last_name AS LName, role.title AS title, role.salary AS salary, department.name AS department, CONCAT(manager.first_name," ", manager.last_name) AS manager_name FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id LEFT JOIN employee AS manager ON employee.manager_id = manager.id';
   db.query(sql, (err, rows) => {
@@ -119,6 +125,8 @@ function viewAllEmployees() {
 }
 
 
+
+// to add a department
 function addDepartment() {
   inquirer.prompt({
     type: 'inpute',
@@ -141,6 +149,8 @@ function addDepartment() {
 }
 
 
+
+// to add a role
 function addRole() {
   const departmentQuery = 'SELECT id, name FROM department';
   db.query(departmentQuery, (err, departments) => {
@@ -191,6 +201,8 @@ function addRole() {
 }
 
 
+
+// to add an employee
 function addEmployee() {
   const roleQuery = 'SELECT id, title FROM role';
   db.query(roleQuery, (err, roles) => {
@@ -257,6 +269,8 @@ function addEmployee() {
 }
 
 
+
+// to update an employee s role
 function updateEmployeeRole() {
   const employeeQuery = 'SELECT id, first_name, last_name FROM employee';
   db.query(employeeQuery, (err, employees) => {
@@ -334,6 +348,8 @@ function updateEmployeeRole() {
 }
 
 
+
+// to delete an employee
 function deleteEmployee() {
   const employeeQuery = 'SELECT id, first_name, last_name FROM employee';
   db.query(employeeQuery, (err, employees) => {
@@ -371,6 +387,8 @@ function deleteEmployee() {
 }
 
 
+
+// to view a department total utilized budget
 function departmentBudget() {
   const departmentQuery = 'SELECT id, name FROM department';
   db.query(departmentQuery, (err, departments) => {
@@ -411,10 +429,7 @@ function departmentBudget() {
 }
 
 
-
-
-
-
+// to start 
 init();
 
 app.use((req, res) => {
