@@ -38,6 +38,7 @@ function init() {
         'Add an employee',
         'Update an employee role',
         'Delete an employee',
+        'Department utilized budget',
         'Exit',
       ]
     })
@@ -68,6 +69,9 @@ function init() {
         case 'Delete an employee':
           deleteEmployee();
           break;
+        case 'Department utilized budget':
+          departmentBudget();
+          break;  
         case 'Exit':
           console.log('End of the task! Disconnected from the company_db database.');
           break;
@@ -364,6 +368,46 @@ function deleteEmployee() {
       });
     });
   });
+}
+
+
+function departmentBudget() {
+  const departmentQuery = 'SELECT id, name FROM department';
+  db.query(departmentQuery, (err, departments) => {
+    if (err) {
+      console.error('Error fetching departments:', err);
+      return;
+    }
+
+    // Map departments to inquirer choices format
+    const departmentChoices = departments.map(department => ({
+      name: department.name,
+      value: department.id
+    }));
+
+
+    inquirer.prompt([
+      {
+        type: 'list',
+        name: 'departmentId',
+        message: 'Select the department:',
+        choices: departmentChoices
+      }
+    ]).then(response => {
+      const sql = 'SELECT SUM(role.salary) FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id WHERE department.id = ?';
+      const values = [response.departmentId];
+
+      db.query(sql, values, (err, result) => {
+        if (err) {
+          console.error('Error adding salaries:', err);
+        } else {
+          console.log(result);
+        }
+        init();
+      });
+    });
+  });
+
 }
 
 
