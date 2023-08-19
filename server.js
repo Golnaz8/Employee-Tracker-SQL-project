@@ -37,6 +37,7 @@ function init() {
         'Add a role',
         'Add an employee',
         'Update an employee role',
+        'Delete an employee',
         'Exit',
       ]
     })
@@ -63,6 +64,9 @@ function init() {
           break;
         case 'Update an employee role':
           updateEmployeeRole();
+          break;
+        case 'Delete an employee':
+          deleteEmployee();
           break;
         case 'Exit':
           console.log('End of the task! Disconnected from the company_db database.');
@@ -298,13 +302,13 @@ function updateEmployeeRole() {
           {
             type: 'list',
             name: 'employeeRole',
-            message: 'What is the employee s role?',
+            message: 'What would you like the employee s role to be?',
             choices: roleChoices
           },
           {
             type: 'list',
             name: 'employeeManager',
-            message: 'Who is the employee s manager?',
+            message: 'Who would you like the employee s manager to be?',
             choices: managerChoices
           }
         ]).then(response => {
@@ -324,6 +328,45 @@ function updateEmployeeRole() {
     });
   });
 }
+
+
+function deleteEmployee() {
+  const employeeQuery = 'SELECT id, first_name, last_name FROM employee';
+  db.query(employeeQuery, (err, employees) => {
+    if (err) {
+      console.error('Error fetching employees:', err);
+      return;
+    }
+
+    // Map employees to inquirer choices format
+    const employeeChoices = employees.map(employee => ({
+      name: `${employee.first_name} ${employee.last_name}`,
+      value: employee.id
+    }));
+
+    inquirer.prompt({
+      type: 'list',
+      name: 'employeeName',
+      message: 'What is the name of the employee?',
+      choices: employeeChoices
+    }).then(response => {
+      const sql = 'DELETE FROM employee WHERE id = ?';
+      const values = [response.employeeName];
+
+      db.query(sql, values, (err, result) => {
+        if (err) {
+          console.error('Error deleting employee:', err);
+          return;
+        } else {
+          console.log('Employee deleted successfully.');
+        }
+        init();
+      });
+    });
+  });
+}
+
+
 
 
 
