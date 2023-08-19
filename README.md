@@ -42,6 +42,7 @@ THEN I am prompted to select a department and the combined salaries of all emplo
 ## Mock-Up
 
 The following walkthrough video, demonstrates aaplication's functionality:
+https://drive.google.com/file/d/1WidFSr-YK1gkDlHTPZMcw1t7rkli1Q41/view
 
 
 ## Installation
