@@ -26,6 +26,8 @@ const db = mysql.createConnection(
 
 // to start the application with the first question and choices then depends on choice a fuction will be called
 function init() {
+
+  // Prompt the user
   inquirer
     .prompt({
       type: 'list',
@@ -96,6 +98,8 @@ function viewAllDepartments() {
   });
 }
 
+
+
 // to view all roles and salaries from role table which is joined with department table
 function viewAllRoles() {
   const sql = 'SELECT role.id AS id, role.title AS title, role.salary AS salary, department.name as department FROM department JOIN role ON department.id = role.department_id';
@@ -128,6 +132,8 @@ function viewAllEmployees() {
 
 // to add a department
 function addDepartment() {
+
+  // Prompt the user for input using Inquirer
   inquirer.prompt({
     type: 'inpute',
     name: 'departmentName',
@@ -152,6 +158,8 @@ function addDepartment() {
 
 // to add a role
 function addRole() {
+
+  // Query to fetch department data
   const departmentQuery = 'SELECT id, name FROM department';
   db.query(departmentQuery, (err, departments) => {
     if (err) {
@@ -159,14 +167,14 @@ function addRole() {
       return;
     }
 
-    // Map departments to inquirer choices format
+    // Map department to inquirer choices format
     const departmentChoices = departments.map(department => ({
       name: department.name,
       value: department.id
     }));
 
 
-
+    // Prompt the user for input using Inquirer
     inquirer.prompt([
       {
         type: 'input',
@@ -204,17 +212,22 @@ function addRole() {
 
 // to add an employee
 function addEmployee() {
+
+  // Query to fetch role data
   const roleQuery = 'SELECT id, title FROM role';
   db.query(roleQuery, (err, roles) => {
     if (err) {
       console.error('Error fetching roles:', err);
       return;
     }
+
+    // Map role to inquirer choices format
     const roleChoices = roles.map(role => ({
       name: role.title,
       value: role.id
     }));
 
+    // Query to fetch manager data
     const managerQuery = 'SELECT id, first_name, last_name FROM employee';
     db.query(managerQuery, (err, managers) => {
       if (err) {
@@ -222,12 +235,14 @@ function addEmployee() {
         return;
       }
 
-      // Map managers to inquirer choices format
+      // Map manager to inquirer choices format
       const managerChoices = managers.map(manager => ({
         name: `${manager.first_name} ${manager.last_name}`,
         value: manager.id
       }));
 
+
+      // Prompt the user for input using Inquirer
       inquirer.prompt([
         {
           type: 'input',
@@ -272,29 +287,36 @@ function addEmployee() {
 
 // to update an employee s role
 function updateEmployeeRole() {
+
+  // Query to fetch employee data
   const employeeQuery = 'SELECT id, first_name, last_name FROM employee';
   db.query(employeeQuery, (err, employees) => {
     if (err) {
       console.error('Error fetching employees:', err);
       return;
     }
+
     // Map employee to inquirer choices format
     const emloyeeChoices = employees.map(employee => ({
       name: `${employee.first_name} ${employee.last_name}`,
       value: employee.id
     }));
 
+    // Query to fetch role data
     const roleQuery = 'SELECT id, title FROM role';
     db.query(roleQuery, (err, roles) => {
       if (err) {
         console.error('Error fetching roles:', err);
         return;
       }
+
+      // Map role to inquirer choices format
       const roleChoices = roles.map(role => ({
         name: role.title,
         value: role.id
       }));
 
+      // Query to fetch manager data
       const managerQuery = 'SELECT id, first_name, last_name FROM employee';
       db.query(managerQuery, (err, managers) => {
         if (err) {
@@ -302,14 +324,14 @@ function updateEmployeeRole() {
           return;
         }
 
-        // Map managers to inquirer choices format
+        // Map manager to inquirer choices format
         const managerChoices = managers.map(manager => ({
           name: `${manager.first_name} ${manager.last_name}`,
           value: manager.id
         }));
 
 
-
+        // Prompt the user for input using Inquirer  
         inquirer.prompt([
           {
             type: 'list',
@@ -351,6 +373,8 @@ function updateEmployeeRole() {
 
 // to delete an employee
 function deleteEmployee() {
+
+  // Query to fetch employee data
   const employeeQuery = 'SELECT id, first_name, last_name FROM employee';
   db.query(employeeQuery, (err, employees) => {
     if (err) {
@@ -358,12 +382,14 @@ function deleteEmployee() {
       return;
     }
 
-    // Map employees to inquirer choices format
+    // Map employee to inquirer choices format
     const employeeChoices = employees.map(employee => ({
       name: `${employee.first_name} ${employee.last_name}`,
       value: employee.id
     }));
 
+
+    // Prompt the user for input using Inquirer
     inquirer.prompt({
       type: 'list',
       name: 'employeeName',
@@ -390,6 +416,8 @@ function deleteEmployee() {
 
 // to view a department total utilized budget
 function departmentBudget() {
+
+  // Query to fetch department data
   const departmentQuery = 'SELECT id, name FROM department';
   db.query(departmentQuery, (err, departments) => {
     if (err) {
@@ -397,13 +425,14 @@ function departmentBudget() {
       return;
     }
 
-    // Map departments to inquirer choices format
+    // Map department to inquirer choices format
     const departmentChoices = departments.map(department => ({
       name: department.name,
       value: department.id
     }));
 
 
+    // Prompt the user for input using Inquirer
     inquirer.prompt([
       {
         type: 'list',
